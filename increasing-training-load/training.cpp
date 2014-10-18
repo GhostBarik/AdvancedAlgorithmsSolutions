@@ -5,7 +5,6 @@
 #include <algorithm>
 // #include <ctime> // for debugging purposes
 
-
 using namespace std;
 
 
@@ -49,11 +48,11 @@ void calculate_best_price(void);
 
 /* -- MAIN -- */
 
-int main( int argc, char const *argv[])
+int main( int argc, char const *argv[] )
 {
     // ifstream myfile("ex1.in");
     // read_data(myfile);
-    read_data( std::cin);
+    read_data( std::cin );
 
     // clock_t begin = clock();
     
@@ -75,7 +74,7 @@ int main( int argc, char const *argv[])
 
 
 // read data from IO-stream
-void read_data( istream& in)
+void read_data( istream& in )
 {
     string row;
     stringstream temp;
@@ -90,7 +89,7 @@ void read_data( istream& in)
 
     temp.clear();
 
-    for( int edge_index = 0; edge_index < M; edge_index++)
+    for( int edge_index = 0; edge_index < M; edge_index++ )
     {
         // read each edge along with price
         getline(in, row);
@@ -100,12 +99,12 @@ void read_data( istream& in)
 
         // add this edge to the adj. list 
         // (2 times, because here we have undirected graph)
-        adj_list[a].push_back( make_pair( b, edge_index));
-        adj_list[b].push_back( make_pair( a, edge_index));
+        adj_list[a].push_back( {b, edge_index});
+        adj_list[b].push_back( {a, edge_index});
 
         // also store this edge's info in the edge list
         edges[edge_index].index  = edge_index;
-        edges[edge_index].coords = make_pair(a,b);
+        edges[edge_index].coords = {a, b};
         edges[edge_index].price = p;
 
         temp.clear();
@@ -113,10 +112,10 @@ void read_data( istream& in)
 }
 
 
-void prepare_data(void)
+void prepare_data( void )
 {
     // prochazime seznam hran
-    for( int edge_index = 0; edge_index < edges.size(); edge_index++)
+    for( int edge_index = 0; edge_index < edges.size(); edge_index++ )
     {
         auto& edge = edges[edge_index];
         int a = edge.coords.first;
@@ -132,12 +131,13 @@ void prepare_data(void)
             if( e_index != edge_index && 
                 edges[e_index].price < current_price)
             {
-                edge.left_neighbours.push_back(make_pair(e_index, edges[e_index].price));
+                edge.left_neighbours.push_back( 
+                    {e_index, edges[e_index].price} );
             }
         } // for
 
         // spocteme "prave" sousedi
-        for( int e = 0; e < adj_list[b].size(); e++)
+        for( int e = 0; e < adj_list[b].size(); e++ )
         {
             int e_index;
             tie(ignore, e_index) = adj_list[b][e];
@@ -145,7 +145,8 @@ void prepare_data(void)
             if( e_index != edge_index && 
                 edges[e_index].price < current_price)
             {
-                edge.right_neighbours.push_back(make_pair(e_index, edges[e_index].price));
+                edge.right_neighbours.push_back( 
+                    {e_index, edges[e_index].price});
             }
         } // for
     } // for
@@ -164,9 +165,9 @@ void prepare_data(void)
 }
 
 
-/* -- MAIN CALCULATION PROCEURE -- */
+/* -- MAIN CALCULATION PROCEDURE -- */
 
-void calculate_best_price(void)
+void calculate_best_price( void )
 {
     // iterate over each edge in list starting 
     // from the smallest (with lowest price)
@@ -230,7 +231,8 @@ void calculate_best_price(void)
         edge.best_right_price = edge.price + max_left_neib_price;
 
         // choose the best path of two
-        const int best_result = max(edge.best_left_price, edge.best_right_price);
+        const int best_result = max(edge.best_left_price, 
+                                    edge.best_right_price);
 
         // update global max price (if we've just found the better one)
         if( best_result > global_max_price)
